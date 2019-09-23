@@ -11,10 +11,14 @@
 
 #include "constants.h"
 
-//============================================================================
-//	stuff you will need
-//============================================================================
 //TODO define a structure to track words and number of times they occur
+//TODO add a global array of entry structs (global to this file)
+//TODO add variable to keep track of next available slot in array
+
+struct Entry {
+	std::string word;
+	int numberOccurences;
+};
 
 /*zero out array that tracks words and their occurrences*/
 void clearArray() {
@@ -39,17 +43,21 @@ int getArrayWord_NumbOccur_At(int i) {
 	return -1;
 }
 
-/*loop through whole file, one line at a time
+/*
+ * loop through whole file, one line at a time
  * call processLine on each line
  * returns false: myfstream is not open
- *         true: otherwise*/
+ *         true: otherwise
+ */
 bool processFile(std::fstream &myfstream) {
 	//TODO: Fix this!
 	return false;
 }
 
-/*take 1 line and extract all the tokens from it
-feed each token to processToken for recording*/
+/*
+ * take 1 line and extract all the tokens from it
+ * feed each token to processToken for recording
+ */
 void processLine(std::string &myString) {
 	//TODO: Fix this!
 	return;
@@ -66,14 +74,13 @@ void processToken(std::string &token) {
  */
 bool openFile(std::fstream& myfile, const std::string& myFileName,
 		std::ios_base::openmode mode = std::ios_base::in) {
-	//TODO: Fix this!
-	return false;
+	myfile.open(myFileName.c_str(),mode);
+	return true;
 }
 
-/*if myfile is open then close it
- */
+/* if myfile is open then close it */
 void closeFile(std::fstream& myfile) {
-	//TODO: Fix this!
+	myfile.close();
 	return;
 }
 
@@ -97,9 +104,16 @@ void sortArray(constants::sortOrder so) {
 	return;
 }
 
+/*
+ * This function takes myString and searches for tokens separated by
+ * constants::CHAR_TO_SEARCH_FOR (a space). This constant is defined in file
+ * constants.h. For each token it finds it calls processToken(tempToken).
+ */
+void extractTokensFromLine(std::string &myString) {
+	std::stringstream ss(myString);
+	std::string tempToken;
 
-//TODO add a global array of entry structs (global to this file)
-
-//TODO add variable to keep track of next available slot in array
-
-//TODO look in utilities.h for useful functions, particularly strip_unwanted_chars!
+	while (getline(ss, tempToken, constants::CHAR_TO_SEARCH_FOR)) {
+		processToken(tempToken);
+	}
+}
