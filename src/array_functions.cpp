@@ -11,7 +11,6 @@
 
 #include "constants.h"
 
-//TODO define a structure to track words and number of times they occur
 //TODO add a global array of entry structs (global to this file)
 //TODO add variable to keep track of next available slot in array
 
@@ -20,19 +19,27 @@ struct Entry {
 	int numberOccurences;
 };
 
-/*zero out array that tracks words and their occurrences*/
+int arraySize = 0; // Is this allowed?
+Entry wordsArray [constants::MAX_WORDS];
+
+/*
+ * zero out array that tracks words and their occurrences
+ */
 void clearArray() {
 	//TODO: Fix this!
 	return;
 }
 
-/*how many unique words are in array*/
+/*
+ * how many unique words are in array
+ */
 int getArraySize() {
-	//TODO: Fix this!
-	return -1;
+	return arraySize;
 }
 
-/*get data at a particular location*/
+/*
+ * get data at a particular location
+ */
 std::string getArrayWordAt(int i) {
 	//TODO: Fix this!
 	return "";
@@ -44,14 +51,11 @@ int getArrayWord_NumbOccur_At(int i) {
 }
 
 /*
- * loop through whole file, one line at a time
- * call processLine on each line
- * returns false: myfstream is not open
- *         true: otherwise
+ * Keep track of how many times each token seen
  */
-bool processFile(std::fstream &myfstream) {
+void processToken(std::string &token) {
 	//TODO: Fix this!
-	return false;
+	return;
 }
 
 /*
@@ -63,13 +67,28 @@ void processLine(std::string &myString) {
 	return;
 }
 
-/*Keep track of how many times each token seen*/
-void processToken(std::string &token) {
-	//TODO: Fix this!
-	return;
+/*
+ * loop through whole file, one line at a time
+ * call processLine on each line
+ * returns false: myfstream is not open
+ *         true: otherwise
+ */
+bool processFile(std::fstream &myfstream) {
+	if (!myfstream.is_open()) {
+		return false;
+	}
+	else {
+		std::string line;
+		while (!myfstream.eof()) {
+			getline(myfstream,line);
+			processLine(line);
+		}
+	}
+	return true;
 }
 
-/*if you are debugging the file must be in the project parent directory
+/*
+ * if you are debugging the file must be in the project parent directory
  *in this case Project2 with the .project and .cProject files
  */
 bool openFile(std::fstream& myfile, const std::string& myFileName,
@@ -78,9 +97,13 @@ bool openFile(std::fstream& myfile, const std::string& myFileName,
 	return true;
 }
 
-/* if myfile is open then close it */
+/*
+ *  if myfile is open then close it
+ */
 void closeFile(std::fstream& myfile) {
-	myfile.close();
+	if (myfile.is_open()) {
+		myfile.close();
+	}
 	return;
 }
 
@@ -100,7 +123,25 @@ int writeArraytoFile(const std::string &outputfilename) {
  * The presence of the enum implies a switch statement based on its value
  */
 void sortArray(constants::sortOrder so) {
-	//TODO: Fix this!
+	switch(so)
+	{
+	case constants::sortOrder::NONE:
+		//TODO: Implement this!
+		break;
+	case constants::sortOrder::ASCENDING:
+		//TODO: Implement this!
+		break;
+	case constants::sortOrder::DESCENDING:
+		//TODO: Implement this!
+		break;
+	case constants::sortOrder::NUMBER_OCCURRENCES:
+		//TODO: Implement this!
+		break;
+	default: // This shouldn't happen
+		//TODO: Figure out some error message or something
+		break;
+	}
+
 	return;
 }
 
