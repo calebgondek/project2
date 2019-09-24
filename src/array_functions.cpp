@@ -19,8 +19,8 @@ struct Entry {
 	int numberOccurences;
 };
 
-int arraySize = 0; // Is this allowed?
-Entry wordsArray [constants::MAX_WORDS];
+int arraySize = 0;
+Entry wordsArray[constants::MAX_WORDS];
 
 /*
  * zero out array that tracks words and their occurrences
@@ -41,30 +41,52 @@ int getArraySize() {
  * get data at a particular location
  */
 std::string getArrayWordAt(int i) {
-	//TODO: Fix this!
-	return "";
+	std::string word = "";
+	if (i > arraySize) {
+		word = wordsArray[i].word;
+	}
+	return word;
 }
 
 int getArrayWord_NumbOccur_At(int i) {
-	//TODOL Fix this!
-	return -1;
+	int number = constants::FAIL_NO_ARRAY_DATA;
+	if (i > arraySize) {
+		number = wordsArray[i].numberOccurences;
+	}
+	return number;
 }
 
 /*
  * Keep track of how many times each token seen
  */
 void processToken(std::string &token) {
-	//TODO: Fix this!
-	return;
+	if (token != "") {
+		for (int i = 0; i < arraySize; ++i) {
+			if (token == wordsArray[i].word) {
+				wordsArray[i].numberOccurences += 1;
+				return;
+			}
+		}
+		Entry newEntry;
+		newEntry.word = token;
+		newEntry.numberOccurences = 1;
+		wordsArray[arraySize] = newEntry;
+		++arraySize;
+	}
 }
 
 /*
- * take 1 line and extract all the tokens from it
- * feed each token to processToken for recording
+ * This function takes myString and searches for tokens separated by
+ * constants::CHAR_TO_SEARCH_FOR (a space). This constant is defined in file
+ * constants.h. For each token it finds it calls processToken(tempToken).
  */
 void processLine(std::string &myString) {
-	//TODO: Fix this!
-	return;
+	std::stringstream ss(myString);
+	std::string tempToken;
+
+	while (getline(ss, tempToken, constants::CHAR_TO_SEARCH_FOR)) {
+		processToken(tempToken);
+	}
 }
 
 /*
@@ -76,11 +98,10 @@ void processLine(std::string &myString) {
 bool processFile(std::fstream &myfstream) {
 	if (!myfstream.is_open()) {
 		return false;
-	}
-	else {
+	} else {
 		std::string line;
 		while (!myfstream.eof()) {
-			getline(myfstream,line);
+			getline(myfstream, line);
 			processLine(line);
 		}
 	}
@@ -91,16 +112,16 @@ bool processFile(std::fstream &myfstream) {
  * if you are debugging the file must be in the project parent directory
  *in this case Project2 with the .project and .cProject files
  */
-bool openFile(std::fstream& myfile, const std::string& myFileName,
+bool openFile(std::fstream &myfile, const std::string &myFileName,
 		std::ios_base::openmode mode = std::ios_base::in) {
-	myfile.open(myFileName.c_str(),mode);
+	myfile.open(myFileName.c_str(), mode);
 	return true;
 }
 
 /*
  *  if myfile is open then close it
  */
-void closeFile(std::fstream& myfile) {
+void closeFile(std::fstream &myfile) {
 	if (myfile.is_open()) {
 		myfile.close();
 	}
@@ -123,8 +144,7 @@ int writeArraytoFile(const std::string &outputfilename) {
  * The presence of the enum implies a switch statement based on its value
  */
 void sortArray(constants::sortOrder so) {
-	switch(so)
-	{
+	switch (so) {
 	case constants::sortOrder::NONE:
 		//TODO: Implement this!
 		break;
@@ -137,24 +157,10 @@ void sortArray(constants::sortOrder so) {
 	case constants::sortOrder::NUMBER_OCCURRENCES:
 		//TODO: Implement this!
 		break;
-	default: // This shouldn't happen
+	default:
 		//TODO: Figure out some error message or something
 		break;
 	}
 
 	return;
-}
-
-/*
- * This function takes myString and searches for tokens separated by
- * constants::CHAR_TO_SEARCH_FOR (a space). This constant is defined in file
- * constants.h. For each token it finds it calls processToken(tempToken).
- */
-void extractTokensFromLine(std::string &myString) {
-	std::stringstream ss(myString);
-	std::string tempToken;
-
-	while (getline(ss, tempToken, constants::CHAR_TO_SEARCH_FOR)) {
-		processToken(tempToken);
-	}
 }
