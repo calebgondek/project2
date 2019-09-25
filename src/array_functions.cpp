@@ -158,12 +158,8 @@ int writeArraytoFile(const std::string &outputfilename) {
 		return constants::FAIL_FILE_DID_NOT_OPEN;
 	}
 
-	std::string tempString;
-
 	for (int i = 0; i < arraySize; ++i) {
-		tempString = wordsArray[i].word + " ";
-		tempString += wordsArray[i].numberOccurences + '\n';
-		myOutputfile << tempString;
+		myOutputfile <<  wordsArray[i].word << ' ' << wordsArray[i].numberOccurences << std::endl;
 	}
 
 	return constants::SUCCESS;
@@ -180,9 +176,7 @@ void sortArray(constants::sortOrder so) {
 	Entry tempEntry;
 
 	switch (so) {
-	default:
-	case constants::sortOrder::NONE:
-	case constants::sortOrder::ASCENDING: //Ascending is the default sort operation
+	case constants::sortOrder::ASCENDING:
 		for (i = 1; i < arraySize; ++i) {
 			for (j = i; j > 0; --j) {
 				if (compareStrings(wordsArray[j-1].word,wordsArray[j].word)) {
@@ -216,6 +210,9 @@ void sortArray(constants::sortOrder so) {
 			}
 		}
 		break;
+	case constants::sortOrder::NONE:
+	default:
+		break; // Do nothing for NONE and default
 	}
 	return;
 }
