@@ -89,6 +89,7 @@ void test_ProcessToken(){
 	processToken(mystring);
 	EXPECT_EQ(0, getArraySize(),"2");
 
+
 	mystring = "\r ";
 	processToken(mystring);
 	EXPECT_EQ(0, getArraySize(),"3");

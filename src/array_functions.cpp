@@ -9,10 +9,8 @@
 #include <sstream>
 #include <string>
 
+#include "utilities.h"
 #include "constants.h"
-
-//TODO add a global array of entry structs (global to this file)
-//TODO add variable to keep track of next available slot in array
 
 struct Entry {
 	std::string word;
@@ -22,12 +20,26 @@ struct Entry {
 int arraySize = 0;
 Entry wordsArray[constants::MAX_WORDS];
 
+bool stringsEqual(std::string str1, std::string str2) {
+	toUpper(str1);
+	toUpper(str2);
+	return str1 == str2;
+}
+
+/*
+ * Checks if str1 is greater than str2 without regard for case
+ */
+bool compareStrings(std::string str1, std::string str2) {
+	toUpper(str1);
+	toUpper(str2);
+	return str1 > str2;
+}
+
 /*
  * zero out array that tracks words and their occurrences
  */
 void clearArray() {
-	//TODO: Fix this!
-	return;
+	arraySize = 0;
 }
 
 /*
@@ -42,7 +54,7 @@ int getArraySize() {
  */
 std::string getArrayWordAt(int i) {
 	std::string word = "";
-	if (i > arraySize) {
+	if (i < arraySize) {
 		word = wordsArray[i].word;
 	}
 	return word;
@@ -50,7 +62,7 @@ std::string getArrayWordAt(int i) {
 
 int getArrayWord_NumbOccur_At(int i) {
 	int number = constants::FAIL_NO_ARRAY_DATA;
-	if (i > arraySize) {
+	if (i < arraySize) {
 		number = wordsArray[i].numberOccurences;
 	}
 	return number;
@@ -60,9 +72,9 @@ int getArrayWord_NumbOccur_At(int i) {
  * Keep track of how many times each token seen
  */
 void processToken(std::string &token) {
-	if (token != "") {
+	if (strip_unwanted_chars(token)) {
 		for (int i = 0; i < arraySize; ++i) {
-			if (token == wordsArray[i].word) {
+			if (stringsEqual(token,wordsArray[i].word)) {
 				wordsArray[i].numberOccurences += 1;
 				return;
 			}
@@ -114,8 +126,9 @@ bool processFile(std::fstream &myfstream) {
  */
 bool openFile(std::fstream &myfile, const std::string &myFileName,
 		std::ios_base::openmode mode = std::ios_base::in) {
+
 	myfile.open(myFileName.c_str(), mode);
-	return true;
+	return myfile.is_open();
 }
 
 /*
@@ -128,14 +141,32 @@ void closeFile(std::fstream &myfile) {
 	return;
 }
 
-/* serializes all content in myEntryArray to file outputfilename
+/*
+ * serializes all content in myEntryArray to file outputfilename
  * returns  FAIL_FILE_DID_NOT_OPEN if cannot open outputfilename
  * 			FAIL_NO_ARRAY_DATA if there are 0 entries in myEntryArray
  * 			SUCCESS if all data is written and outputfilename closes OK
  */
 int writeArraytoFile(const std::string &outputfilename) {
-	//TODO: Fix this!
-	return -1;
+	if (arraySize == 0) {
+		return constants::FAIL_NO_ARRAY_DATA;
+	}
+	std::ofstream myOutputfile;
+	myOutputfile.open(outputfilename);
+
+	if (!myOutputfile.is_open()) {
+		return constants::FAIL_FILE_DID_NOT_OPEN;
+	}
+
+	std::string tempString;
+
+	for (int i = 0; i < arraySize; ++i) {
+		tempString = wordsArray[i].word + " ";
+		tempString += wordsArray[i].numberOccurences + '\n';
+		myOutputfile << tempString;
+	}
+
+	return constants::SUCCESS;
 }
 
 /*
@@ -144,23 +175,47 @@ int writeArraytoFile(const std::string &outputfilename) {
  * The presence of the enum implies a switch statement based on its value
  */
 void sortArray(constants::sortOrder so) {
+	int i, j;
+
+	Entry tempEntry;
+
 	switch (so) {
+	default:
 	case constants::sortOrder::NONE:
-		//TODO: Implement this!
-		break;
-	case constants::sortOrder::ASCENDING:
-		//TODO: Implement this!
+	case constants::sortOrder::ASCENDING: //Ascending is the default sort operation
+		for (i = 1; i < arraySize; ++i) {
+			for (j = i; j > 0; --j) {
+				if (compareStrings(wordsArray[j-1].word,wordsArray[j].word)) {
+					tempEntry = wordsArray[j];
+					wordsArray[j] = wordsArray[j - 1];
+					wordsArray[j - 1] = tempEntry;
+				}
+			}
+		}
 		break;
 	case constants::sortOrder::DESCENDING:
-		//TODO: Implement this!
+		for (i = 1; i < arraySize; ++i) {
+			for (j = i; j > 0; --j) {
+				if (compareStrings(wordsArray[j].word,wordsArray[j-1].word)) {
+					tempEntry = wordsArray[j];
+					wordsArray[j] = wordsArray[j - 1];
+					wordsArray[j - 1] = tempEntry;
+				}
+			}
+		}
 		break;
 	case constants::sortOrder::NUMBER_OCCURRENCES:
-		//TODO: Implement this!
-		break;
-	default:
-		//TODO: Figure out some error message or something
+		for (i = 1; i < arraySize; ++i) {
+			for (j = i; j > 0; --j) {
+				if (wordsArray[j - 1].numberOccurences
+						> wordsArray[j].numberOccurences) {
+					tempEntry = wordsArray[j];
+					wordsArray[j] = wordsArray[j - 1];
+					wordsArray[j - 1] = tempEntry;
+				}
+			}
+		}
 		break;
 	}
-
 	return;
 }
