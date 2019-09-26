@@ -17,29 +17,27 @@ struct Entry {
 	int numberOccurences;
 };
 
-int arraySize = 0;
+const int EMPTY_ARRAY_SIZE = 0;
+const int FIRST_OCCURRENCE = 1;
+
+int arraySize = EMPTY_ARRAY_SIZE;
 Entry wordsArray[constants::MAX_WORDS];
 
-bool stringsEqual(std::string str1, std::string str2) {
-	toUpper(str1);
-	toUpper(str2);
-	return str1 == str2;
-}
 
 /*
- * Checks if str1 is greater than str2 without regard for case
+ * Compares str1 and str2 without regard for case
  */
-bool compareStrings(std::string str1, std::string str2) {
+int compareStrings(std::string str1, std::string str2) {
 	toUpper(str1);
 	toUpper(str2);
-	return str1 > str2;
+	return str1.compare(str2);
 }
 
 /*
  * zero out array that tracks words and their occurrences
  */
 void clearArray() {
-	arraySize = 0;
+	arraySize = EMPTY_ARRAY_SIZE;
 }
 
 /*
@@ -74,14 +72,14 @@ int getArrayWord_NumbOccur_At(int i) {
 void processToken(std::string &token) {
 	if (strip_unwanted_chars(token)) {
 		for (int i = 0; i < arraySize; ++i) {
-			if (stringsEqual(token,wordsArray[i].word)) {
+			if (compareStrings(token,wordsArray[i].word) == 0) {
 				wordsArray[i].numberOccurences += 1;
 				return;
 			}
 		}
 		Entry newEntry;
 		newEntry.word = token;
-		newEntry.numberOccurences = 1;
+		newEntry.numberOccurences = FIRST_OCCURRENCE;
 		wordsArray[arraySize] = newEntry;
 		++arraySize;
 	}
@@ -179,7 +177,7 @@ void sortArray(constants::sortOrder so) {
 	case constants::sortOrder::ASCENDING:
 		for (i = 1; i < arraySize; ++i) {
 			for (j = i; j > 0; --j) {
-				if (compareStrings(wordsArray[j-1].word,wordsArray[j].word)) {
+				if (compareStrings(wordsArray[j-1].word,wordsArray[j].word) > 0) {
 					tempEntry = wordsArray[j];
 					wordsArray[j] = wordsArray[j - 1];
 					wordsArray[j - 1] = tempEntry;
@@ -190,7 +188,7 @@ void sortArray(constants::sortOrder so) {
 	case constants::sortOrder::DESCENDING:
 		for (i = 1; i < arraySize; ++i) {
 			for (j = i; j > 0; --j) {
-				if (compareStrings(wordsArray[j].word,wordsArray[j-1].word)) {
+				if (compareStrings(wordsArray[j-1].word,wordsArray[j].word) < 0) {
 					tempEntry = wordsArray[j];
 					wordsArray[j] = wordsArray[j - 1];
 					wordsArray[j - 1] = tempEntry;
@@ -212,7 +210,8 @@ void sortArray(constants::sortOrder so) {
 		break;
 	case constants::sortOrder::NONE:
 	default:
-		break; // Do nothing for NONE and default
+		break; // Do nothing for NONE and otherwise
 	}
+
 	return;
 }
