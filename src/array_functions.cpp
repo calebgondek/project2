@@ -11,6 +11,7 @@
 
 #include "utilities.h"
 #include "constants.h"
+#include "array_functions.h"
 
 struct Entry {
 	std::string word;
@@ -123,7 +124,7 @@ bool processFile(std::fstream &myfstream) {
  *in this case Project2 with the .project and .cProject files
  */
 bool openFile(std::fstream &myfile, const std::string &myFileName,
-		std::ios_base::openmode mode = std::ios_base::in) {
+		std::ios_base::openmode mode) {
 
 	myfile.open(myFileName.c_str(), mode);
 	return myfile.is_open();
